@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+canvas {
+             position:fixed;
+            top: 0;
+            left: 0;
+            z-index:0;
+              
+           /* Remove any extra spacing */
+    background: transparent;  
+        }
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src='https://www.gstatic.com/charts/loader.js'></script>
+      <script>
+      google.charts.load('upcoming', {'packages': ['vegachart']}).then(drawChart);
+
+      function drawChart() {
+        const dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({type: 'string', 'id': 'category'});
+        dataTable.addColumn({type: 'number', 'id': 'amount'});
+        dataTable.addRows([
+          ['2004', 19],
+          ['2005', 895],
+          ['2006', 820],
+          ['2007', 1103],
+          ['2008', 1097],
+          ['2009', 1196],
+          ['2010', 600],
+          ['2011', 764],
+          ['2012', 524],
+          ['2013', 753],
+          ['2014', 418],
+          ['2015', 359],
+        ]);
+
+        const options = {
+          "vega": {
+            "$schema": "https://vega.github.io/schema/vega/v4.json",
+            "width": 600,
+            "height": 410,
+            "padding": 5,
+            // bolor: '#6f0101',
+            "config": {
+          "axis": {
+            "labelColor": "#FFFFFF", // White color for axis labels
+            "labelFontSize": 15,    // Font size for axis labels
+            "titleColor": "#FFFFFF",  // White color for axis titles
+            "titleFontSize": 15    // Font size for axis titles
+          },
+          // If you have a title for the entire chart (not just axis titles),
+          // you would define it here. Example:
+          "title": {
+            "color": "#f5f7fa",   // White color for the chart title
+            "fontSize": 15        // Font size for the chart title
+          }
+        },
+
+            'data': [{'name': 'table', 'source': 'datatable'}],
+
+            "signals": [
+              {
+                "name": "tooltip",
+                "value": {},
+                "on": [
+                  {"events": "rect:mouseover", "update": "datum"},
+                  {"events": "rect:mouseout",  "update": "{}"}
+                ]
+              }
+            ],
+
+            "scales": [
+              {
+                "name": "xscale",
+                "type": "band",
+                "domain": {"data": "table", "field": "category"},
+                "range": "width",
+                "padding":0.05,
+                "round": true,
+              },
+              {
+                "name": "yscale",
+                "domain": {"data": "table", "field": "amount"},
+                "nice": true,
+                "range": "height",
+              }
+            ],
+
+            "axes": [
+              { "orient": "bottom", "scale": "xscale" },
+              { "orient": "left", "scale": "yscale" }
+        
+            ],
+
+            "marks": [
+              {
+                "type": "rect",
+                "from": {"data":"table"},
+                "encode": {
+                  "enter": {
+                    "x": {"scale": "xscale", "field": "category"},
+                    "width": {"scale": "xscale", "band": 1},
+                    "y": {"scale": "yscale", "field": "amount"},
+                    "y2": {"scale": "yscale", "value": 0}
+                  },
+                  "update": {
+                    "fill": {"value": "#5594fa"}
+                  },
+                  "hover": {
+                    "fill": {"value": "white"}
+                  }
+                }
+              },
+              {
+                "type": "text",
+                "encode": {
+                  "enter": {
+                    "align": {"value": "center"},
+                    "baseline": {"value": "bottom"},
+                    "fill": {"value": "white"},
+                    "fontSize": {"value": 14}
+                  },
+                  "update": {
+                    "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+                    "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+                    "text": {"signal": "tooltip.amount"},
+                    "fillOpacity": [
+                      {"test": "datum === tooltip", "value": 0},
+                      {"value": 1}
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        };
+
+        const chart = new google.visualization.VegaChart(document.getElementById('chart-div'));
+        chart.draw(dataTable, options);
+      }
+  </script>
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['MS DHONI', 'All the sixes'],
+      ['TESTs',     78],
+      ['ODIs',      229],
+      ['T20s',  52],
+      ['IPL', 264],
+    ]);
+
+    var options = {
+      // title:'SIXES OF MS DHONI IN ALL FORMATS', // Added title for clarity
+      is3D: true,
+         backgroundColor: 'transparent',
+         titleTextStyle: {
+        fontSize: 5 
+      },
+        pieSliceTextStyle: {
+        fontSize: 25
+      },     
+      legend: {
+  textStyle: {
+    color: 'white',
+    fontSize: 30 // Make sure this is here
+  }
+},
+      //  chartArea: {
+      //   backgroundColor: 'transparent' // This ensures the inner chart area is also transparent
+      //  }
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart_3'));
+    chart.draw(data, options);
+}
+</script> 
+<link rel="stylesheet" href="style5.css">
+<body>
+  <div class="sliding-background"><canvas id="particleCanvas" height="7700" width="1500" ></canvas></div>
+         FPS: <span id="framerate" >0</span><br>
+        Particles: <span id="particlesCount" >0</span>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<script>
+
+    // --- Configuration ---
+    
+    // --- Configuration ---
+    const config = {
+        particleCount: 2000,
+        particleSize: 5,
+        particleSpeedMin: 0.5, 
+        particleSpeedMax: 2,  
+         particleLifespan: Infinity, // Use Infinity for continuous looping with GSAP repeat:-1
+          particleColor: '255, 255, 255', // RGB values for particles (white)
+        canvasClearOpacity: 0.08, // Controls how quickly trails fade (lower = longer trails)
+        mouseInfluenceRadius: 100,
+        mouseAttractionForce: 2,
+         
+
+        // --- Vibration Settings ---
+        vibrationMagnitude: 0.5, // How far particles vibrate (in pixels)
+        vibrationSpeed: 0.1,    // How rapidly the vibration changes (lower = faster)
+    };
+
+    // --- Canvas Setup ---
+     const canvas = document.getElementById('particleCanvas');
+     const ctx = canvas.getContext('2d');
+     let animationFrameId;
+ const backgroundImage = new Image();
+ backgroundImage.src = "bacl.jpg"; // Set the image source
+let backgroundImageLoaded = true; 
+ backgroundImage.onload = function() {
+     ctx.drawImage( backgroundImage,0, 0, canvas.width, canvas.height); // Draw the image first
+     
+     // Optionally, add a transparent overlay
+     ctx.fillStyle = `rgba(0, 0, 0, ${config.canvasClearOpacity})`; // Set the fill style with desired color and opacity
+    ctx.fillRect(backgroundImage.src = "bacl.jpg", 0,canvas.width, canvas.height); // Draw the overlay rectangle
+ }
+ // ... (Previous setup) ...
+
+
+  // Draw the image first // To store the requestAnimationFrame ID
+    // --- HUD Elements ---
+    const framerateDisplay = document.getElementById('framerate');
+    const particlesCountDisplay = document.getElementById('particlesCount');
+
+    // --- Particle and Mouse Data ---
+    // Using a simple array now. For 2000 particles, array operations are likely fine,
+    // and potentially simpler to manage with GSAP if we're not constantly adding/removing mid-list.
+    // If frequent, high-performance mid-list additions/removals are needed, LinkedList is better.
+     const particles = [];
+    let mouse = { x: 0, y: 0, isActive: false };
+
+    // --- Helper Functions ---
+    function getRandom(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    // --- Particle Class ---
+    function Particle(x, y) {
+        this.baseX = x; // Stores the intended X position from GSAP's tween
+        this.baseY = y; // Stores the intended Y position from GSAP's tween
+        this.x = x;     // Actual rendered X position (baseX + mouse_influence + vibration)
+        this.y = y;     // Actual rendered Y position (baseY + mouse_influence + vibration)
+        this.alpha = 1;
+        this.tween = null; // Stores the GSAP tween instance for this particle
+        this.vx = 0; // Velocity component from mouse interaction
+        this.vy = 0;
+        this.vibrationAngle = getRandom(0, Math.PI * 2); // Unique starting phase for vibration
+    }
+
+    // --- Particle Spawning ---
+    function spawnParticle(x, y) {
+        // Only spawn if we haven't hit the max particle count
+        if (particles.length < config.particleCount) {
+            const newParticle = new Particle(x, y);
+
+            // Calculate a random target position for the GSAP tween
+            const targetX = x + getRandom(-canvas.width / 2, canvas.width / 2);
+            const targetY = y + getRandom(-canvas.height / 2, canvas.height / 2);
+
+            // Create the GSAP tween for the particle
+            newParticle.tween = gsap.to(newParticle, {
+                duration: getRandom(config.particleLifespan * 0.8, config.particleLifespan * 1.2), // Randomize duration slightly
+                x: targetX,
+                y: targetY,
+                alpha: 0, // Particles fade out
+                ease: "none",
+                repeat: -1, // Repeat indefinitely
+                yoyo: true, // Go back and forth
+                repeatRefresh: true, // Recalculate target on repeat
+                delay: getRandom(0, config.particleLifespan), // Stagger the start times
+                onUpdate: function() {
+                    // When GSAP updates the particle's x/y, store it as the 'base' position
+                    newParticle.baseX = newParticle.x;
+                    newParticle.baseY = newParticle.y;
+                },
+                onComplete: function() {
+                    // With repeat:-1, onComplete won't fire unless tween is manually killed.
+                    // If using finite lifespan, this is where you'd respawn/remove.
+                }
+            });
+
+            particles.push(newParticle); // Add particle to the array
+        }
+    }
+
+    function spawnInitialParticles() {
+        for (let i = 0; i < config.particleCount; i++) {
+            const x = getRandom(0, canvas.width);
+            const y = getRandom(0, canvas.height);
+            spawnParticle(x, y);
+        }
+    }
+ 
+    // --- Animation Loop ---
+    let lastFrameTime =0;
+function animate(currentTime) {
+    animationFrameId = requestAnimationFrame(animate);
+
+    // Instead of drawing the background, clear the canvas to transparent
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // This clears to transparent
+
+    // Update and draw particles (movement is handled by GSAP's onUpdate)
+    particles.forEach(particle => {
+        particle.draw();
+    });
+
+    // ... (rest of your animation loop code)
+}
+    let frameCount =0;
+    let fps = 0;
+
+    function animate(currentTime) {
+        animationFrameId = requestAnimationFrame(animate);
+
+        // Calculate FPS for HUD
+        frameCount++;
+        if (currentTime - lastFrameTime >= 1000) {
+            fps = frameCount;
+            frameCount = 0;
+            lastFrameTime = currentTime;
+        }
+
+        // Update HUD
+        framerateDisplay.textContent = fps;
+        particlesCountDisplay.textContent = particles.length;
+         
+        // Clear canvas with partial opacity for trail effec
+        //    ctx.fillStyle = `rgba(0, 0, 0, ${config.canvasClearOpacity})`;  
+        //   ctx.fillRect(backgroundImage.src ="family.jpg",0, 0, canvas.width, canvas.height);
+
+    // Optionally, add a transparent overlay
+//     ctx.fillStyle = `rgba(0, 0, 0, ${config.canvasClearOpacity})`; // Set the fill style with desired color and opacity
+//     ctx.fillRect(0, 0, canvas.width, canvas.height); // Draw the overlay rectangle
+// };
+
+        // Update and draw particles
+        for (let i = 0; i < particles.length; i++) {
+            const particle = particles[i];
+
+            // Apply mouse interaction if active
+            if (mouse.isActive && config.mouseAttractionForce > 0) {
+                const dx = mouse.x - particle.baseX; 
+                const dy = mouse.y - particle.baseY; 
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < config.mouseInfluenceRadius) {
+                    const force = config.mouseAttractionForce * (1 - distance / config.mouseInfluenceRadius);
+                    particle.vx += dx * force;
+                    particle.vy += dy * force;
+                }
+            }
+
+            // Apply velocity from mouse interaction and dampening
+            particle.x = particle.baseX + particle.vx; 
+            particle.y = particle.baseY + particle.vy; 
+            particle.vx *= 0.95; // Dampen velocity
+            particle.vy *= 0.95;
+
+            // --- Apply Vibration ---
+            particle.vibrationAngle += config.vibrationSpeed;
+            particle.x += Math.sin(particle.vibrationAngle) * config.vibrationMagnitude;
+            particle.y += Math.cos(particle.vibrationAngle * 0.7) * config.vibrationMagnitude; 
+
+            // Boundary handling (wrap around) - applies to the final rendered position
+            if (particle.x < 0) particle.x = canvas.width;
+            if (particle.x > canvas.width) particle.x = 0;
+            if (particle.y < 0) particle.y = canvas.height;
+            if (particle.y > canvas.height) particle.y = 0;
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, config.particleSize / 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${config.particleColor}, ${particle.alpha})`;
+            ctx.fill();
+        }
+    }
+
+    // --- Event Listeners ---
+    window.addEventListener('resize', resizeCanvas);
+
+    canvas.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    canvas.addEventListener('mouseenter', () => {
+        mouse.isActive = true;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        mouse.isActive = false;
+    });
+
+    // --- Initialization ---
+    function init() {
+        resizeCanvas();
+        spawnInitialParticles();
+        animate();
+    }
+
+    init(); 
+</script> 
+    <div id="mm"  >
+    <h1><span class="head" >M</span>
+       <span  class="head" >S</span>
+       <span class="head" > </span>
+       <span class="head" >D</span>
+       <span class="head" >H</span>
+       <span class="head" >O</span>
+       <span class="head" >N</span>
+       <span class="head" >I</span>
+       </h1>
+    </div>
+    <br><br><br><br> <br><br><br><br><br> <br><br><br><br><br> <br><br><br><br><br><br><br>
+    <div id="abs">
+    <div id="main">
+        <div id="page">
+          <h3>*Dhoni (born July 7, 1981, Ranchi, Bihar [now Jharkhand] state, India) is an Indian cricketer whose rise to prominence in the early 21st century culminated <br>In his captaincy 
+     of the Indian national team that won the one-day Cricket World Cup in 2011.<br>Dhoni made his international debut in 2004. His talent with the bat came to the fore in an
+ Innings of 148 runs against Pakistan in his fifth international match.<br> Within a year he joined the India Test team, where he quickly established himself with a century
+(100 or more runs in a single innings) against Pakistan.</h3>
+            <h4>...SCROLL TO READ</h4>
+            <canvas></canvas>
+            <div id="left-text">
+                    <h3></h3>*Despite his inexperience, Dhoni took over the captaincy of the one-day side in 2007 and led India to the 
+Twenty20(T20) world title.Series wins over Australia and Sri Lanka, among others, moved India to the top of the International Cricket Council (ICC) Test rankings for
+the first time in December 2009. Dhoni was honoured for his play with the ICC One Day International Player of the Year Award in 2008 and 2009. In the 2011 one-day 
+World Cup, Dhoni’s dashing innings of 91 not out—in front of a home crowd in Mumbai—paved the way for India’s victory over Sri Lanka in the final. He also led India to 
+an appearance in the semifinals of the 2015 Cricket World Cup.
+            </div>
+     <div id="right">
+                <h3> *Dhoni stopped serving as India’s captain in 2017, having led his country in 331 international matches, the 
+ most for a captain in the sport’s history. Three years later he retired from international competition.The explosion of T20 cricket on the Indian subcontinent paved the  
+   for the formation of the Indian Premier League (IPL) in 2008. In the league inaugural season, Dhoni signed with the Chennai Super Kings for $1.5 million, which at 
+     the time was the largest contract in the IPL.</h3>
+                </div>
+                <div id="left">
+                  <h3> *He subsequently led the team to two consecutive titles (2010, 2011). The Super Kings franchise earned a two-season
+suspension from the IRL in 2016 for its role in a match-fixing scandal, and Dhoni then joined the Rising Pune Supergiant. In 2018 he returned to the Chennai Super Kings,
+ and the team won the IPL championship that year and in 2021.</h3>
+                </div>
+        </div>
+    </div>
+<center><div id="img">
+<img src="dhoni1.jpg"></div></center>
+ <ol>
+  <h2>Captaincy Records:</h2>
+    <ul>
+        <li>Most Matches as Captain (All Formats): Dhoni led 332 matches across Tests, ODIs, and T20Is, the most by any captain. </li>
+        <li>Highest Winning Percentage amongst IPL Captains: He has a winning percentage of 59.37% in the IPL. </li>
+        <li>Most Wins as IPL Captain: He holds the record for most wins as an IPL captain with 133 victories. </li>
+       
+    </ul>
+    <h2>Batting Records:</h2>
+<ul>
+    <li>Most Runs in ODI History When Batting at Number 6: He has scored 4031 runs in ODIs when batting at number 6. </li>
+<li>First Indian and Fifth Overall to Hit 200 Sixes in ODIs: Dhoni has hit 228 sixes in ODIs, the most by any Indian batsman.</li>
+<li>Highest Individual Score by a Wicketkeeper in ODIs: He scored 183* against Sri Lanka in 2005, the highest by a wicketkeeper-batsman. </li>
+<li>Highest Partnership for the 9th Wicket in ODIs: He holds the record for the highest partnership for the 9th wicket (101) in ODIs.</li>
+</ul>
+<h2>Wicketkeeping Records:</h2>
+<ul>
+    <li>Most Stumpings in International Cricket: Dhoni has 195 stumpings across all formats.</li>
+    <li>Most Dismissals in an IPL Inning: He holds the record for most dismissals (wicketkeeping) in an IPL inning.</li>
+</ul>
+<h2>IPL Records:</h2>
+<ul>
+    <li>Most Wins as IPL Captain: 133 wins.</li>
+    <li>Most Sixes by an IPL Captain: 218 sixes.</li>
+    <li>Most Dismissals by an IPL Wicketkeeper: 195 dismissals.</li>
+    <li>Most Runs as IPL Captain: 4660 runs.</li>
+</ul>
+</ol>
+    </div>
+<br><br><br><br><br><br> <br><br><br><br><br><br><br><br><br> <br><br><br><br>
+<div class="iik" style="background-image:url(oo.png)" >
+<div class="om">International Achievement<div class="om2">Ms Dhoni As Caption</div></div></div>
+<br><br><br><br><br><br><br> <br><br><br><br><br><br><br><br><br> <br><br><br><br>
+<div class="banner">
+  <div class="carousel">
+    <div class="list">
+       <div class="item" style="background-image:url(india-team-world-cup-2011-wallpaper-preview.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(WC2007team.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(6b1ac89fd9592cf4faf511f82b5cc68d.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(f746c028-1e72-4bcd-a1c8-4402dfeeed6b.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ea8177dcabeca7d2d655f5a03a8c8524.jpg) ;">
+         <div class="content">
+                 
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ddb4cda0442e3cbac2118947ee39871f.jpg) ;">
+         <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ab00526c230570f5996e331f4421500a.jpg) ;">
+         <div class="content">
+      
+        </div>
+       </div>
+    </div>
+    <div class="arrows">
+        <button class="prev"><</button>
+        <button class="next">></button>
+    </div>
+    <div class="timerunning"></div>
+  </div>
+        <div class="indialogo">
+           <img src="indialogo-removebg-preview.png" height="400px" width="400px">
+        </div>
+  <div class="slider" style="--quantity:5">
+<div class="item" style="--position:1"><img src="t202007.jpg"class="dhoni-img"></div>
+<div class="item" style="--position:2"><img src="2011wordcup.jpg"class="dhoni-img"></div>
+<div class="item" style="--position:3"><img src="cham.jpg"class="dhoni-img"></div>
+<div class="item" style="--position:4"><img src="trophyicc.jpg"class="dhoni-img"></div>
+<div class="item" style="--position:5"><img src="dhonitest.jpeg"class="dhoni-img"></div>
+  </div>
+     <div class="indiacups" style="--quantity:4">
+  <div class="box" style="--position:1"><img src="20073d copy.jpg" height="500px"class="dhoni-img"></div>
+<div class="box2"  style="--position:2"><img src="icc_cricket_world_cup_trophy_3d_model_c4d_max_obj_fbx_ma_lwo_3ds_3dm_stl_5873290_m-removebg-preview.png" height="500px" width="500px"class="dhoni-img"></div>
+<div class="box" style="--position:3"><img src="20130-removebg-preview.png"class="dhoni-img"></div>
+<div class="box3" style="--position:4"><img src="testcham-removebg-preview.png" height="500px" width="500px"class="dhoni-img"></div>
+     </div></div> 
+    </div></div>
+    <br><br><br><br> <br><br><br><br><br><br><br><br><br> <br><br><br><br>
+  <div id="cik" style="background-image: url(jjjjjjj.jpg);"></div>
+<br><br><br><br><br><br><br><br> <br><br><br><br><br><br><br><br><br> 
+<div class="dubba">
+        <div class="carousel">
+    <div class="list">
+       <div class="item" style="background-image:url(chennai-super-kings-indian-premier-league-ipl-ipl-2021-2880x1800-4938.png) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(2023ipl.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(dhoni1.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(f746c028-1e72-4bcd-a1c8-4402dfeeed6b.jpg) ;">
+        <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ea8177dcabeca7d2d655f5a03a8c8524.jpg) ;">
+         <div class="content">
+                 
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ddb4cda0442e3cbac2118947ee39871f.jpg) ;">
+         <div class="content">
+        </div>
+       </div>
+       <div class="item" style="background-image:url(ab00526c230570f5996e331f4421500a.jpg) ;">
+         <div class="content">
+      
+        </div>
+       </div>
+    </div>
+     <div class="arrows">
+        <button class="prev"><</button>
+        <button class="next">></button>
+    </div>
+        
+    <div class="timerunning"></div>
+  </div>
+        <div class="csklogo">
+           <img src="csklogo1-removebg-preview.png">
+        </div> 
+  <div class="iplcsk" style="--quantity:5">
+<div class="csk" style="--position:1"><img src="2010ipl.jpg" class="dhoni-img"></div>
+<div class="csk" style="--position:2"><img src="2011ipl.jpg"class="dhoni-img"></div>
+<div class="csk" style="--position:3"><img src="2018ipl.jpg"class="dhoni-img"></div>
+<div class="csk" style="--position:4"><img src="2021ipl.webp"class="dhoni-img"></div>
+<div class="csk" style="--position:5"><img src="2023ipl.jpg"class="dhoni-img"></div>
+  </div>
+     <div class="iplcups" style="--quantity:5">
+  <div class="cups" style="--position:1"><img src="dlf-removebg-preview.png"class="dhoni-img"></div>
+<div class="cups" style="--position:2"><img src="ipl-trophy-png-2018-indian-premier-league-11715891563q59jsolebc-removebg-preview.png"class="dhoni-img"></div>
+<div class="cups" style="--position:3"><img src="ipl-trophy-png-2018-indian-premier-league-11715891563q59jsolebc-removebg-preview.png"class="dhoni-img"></div>
+<div class="cups" style="--position:4"><img src="ipl-trophy-png-2018-indian-premier-league-11715891563q59jsolebc-removebg-preview.png"class="dhoni-img"></div>
+<div class="cups" style="--position:5"><img src="ipl-trophy-png-2018-indian-premier-league-11715891563q59jsolebc-removebg-preview.png"class="dhoni-img"></div>
+    </div></div>
+<br><br><br><br><br><br><br><br><br><br> <br><br><br><br>
+
+    <h2 class="ll">
+       Ms Dhoni Run Per YEAR :
+    </h2> 
+    
+
+<br><br><br><br><br><br><br><br><br><br> <br><br><br><br>
+    <table class="cbo">
+    <thead>
+        <caption>
+            <b><u></u></b>
+        </caption>
+        <tr>
+            <th>YEAR</th>
+            <th>RUNS</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><i>2004</i></td>
+            <td>19</td>
+        </tr>
+             <tr><td><i>2005</i></td>
+                <td>895</td>
+                </tr><tr>
+                <td><i>2006</i></td>
+                <td>820</td></tr><tr>
+                <td><i>2007</i></td>
+                <td>1103</td></tr><tr><td><i>2008</i></td>
+                <td>1097</td></tr><tr><td><i>2009</i></td>
+                <td>1196</td></tr><tr><td><i>2010</i></td>
+                <td>600</td></tr><tr><td><i>2011</i></td>
+                <td>764</td></tr><tr><td><i>2012</i></td>
+                <td>524</td></tr><tr><td><i>2013</i></td>
+                <td>753</td></tr><tr><td><i>2014</i></td>
+                <td>418</td></tr><tr><td><i>2015</i></td>
+                <td>359</td></tr>
+            </tr>
+        </tr></tbody>
+</table>
+<div id="chart-div" style="width: 800px; height: 400px;">
+</div>
+<br><br><br><br><br><br><br> <br><br>
+<h2 class="ll">SIXES OF MS DHONI IN ALL FORMATES:</h2>
+<br>
+<br><br><br><br><br><center>
+<div id="piechart_3" style="width: 1200px; height: 700px;"></div></center>
+<script src="css.js"></script>
+
+</body>
+</html>
